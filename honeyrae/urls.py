@@ -1,3 +1,8 @@
+from rest_framework import routers
+from repairsapi.views import CustomerView
+from repairsapi.views import EmployeeView
+from repairsapi.views import ServiceTicketView
+ 
 """honeyrae URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -18,8 +23,14 @@ from django.conf.urls import include
 from django.urls import path
 from repairsapi.views import register_user, login_user
 
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'customers', CustomerView, 'customer')
+router.register(r'employees', EmployeeView, 'employee')
+router.register(r'tickets', ServiceTicketView, 'serviceTicket')
+
 urlpatterns = [
     path('register', register_user),
     path('login', login_user),
     path('admin/', admin.site.urls),
+    path('', include(router.urls))
 ]
