@@ -1,4 +1,4 @@
-echo '[FORMAT]
+[FORMAT]
 good-names=i,j,ex,pk
 
 [MESSAGES CONTROL]
@@ -6,4 +6,3 @@ disable=broad-except,imported-auth-user,missing-class-docstring,no-self-use,abst
 
 [MASTER]
 disable=C0114
-' > .pylintrc

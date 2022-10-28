@@ -36,5 +36,5 @@ class CustomerSerializer(serializers.ModelSerializer):
     """JSON serializer for customers"""
     class Meta:
         model = Customer
-        fields = ('id', 'address', 'user', 'full_name')
+        fields = ('id', 'address', 'full_name', 'user')
         depth = 1
