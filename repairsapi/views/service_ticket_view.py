@@ -73,15 +73,18 @@ class ServiceTicketView(ViewSet):
 
         service_tickets = []
 
-        if "status" in request.query_params:
-            if request.query_params['status'] == "done":
-                service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
-
-            if request.query_params['status'] == "all":
-                service_tickets = ServiceTicket.objects.all()
-
-        else:
+        if request.auth.user.is_staff:
             service_tickets = ServiceTicket.objects.all()
+
+            if "status" in request.query_params:
+                if request.query_params['status'] == "done":
+                    service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
+
+                if request.query_params['status'] == "all":
+                    pass
+                
+        else:
+            service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
 
         serialized = ServiceTicketSerializer(service_tickets, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
