@@ -51,13 +51,15 @@ class ServiceTicketView(ViewSet):
         ticket = ServiceTicket.objects.get(pk=pk)
 
         # Get the employee id from the client request
-        employee_id = request.data['employee']
+        employee_id = request.data['employee']['id']
 
         # Select the employee from the database using that id
         assigned_employee = Employee.objects.get(pk=employee_id)
         
         # Assign that Employee instance to the employee property of the ticket
         ticket.employee = assigned_employee
+
+        ticket.date_completed = request.data['dateCompleted']
 
         # Save the updated ticket
         ticket.save( )
@@ -80,8 +82,15 @@ class ServiceTicketView(ViewSet):
                 if request.query_params['status'] == "done":
                     service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
 
-                if request.query_params['status'] == "all":
-                    pass
+                elif any(status_value == request.query_params['status'] for status_value in ('claimed', 'inprogress')):
+                    service_tickets = ServiceTicket.objects.filter(employee__isnull=False, date_completed__isnull=True, )
+
+                elif request.query_params['status'] == "all":
+                    # pass
+                    service_tickets = ServiceTicket.objects.all()
+                
+                else:
+                    return Response({ "message": 'Invalid-status must be equal to "done" or "all".'}, status.HTTP_400_BAD_REQUEST)
                 
         else:
             service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
