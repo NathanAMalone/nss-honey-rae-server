@@ -82,15 +82,21 @@ class ServiceTicketView(ViewSet):
                 if request.query_params['status'] == "done":
                     service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
 
-                elif any(status_value == request.query_params['status'] for status_value in ('claimed', 'inprogress')):
-                    service_tickets = ServiceTicket.objects.filter(employee__isnull=False, date_completed__isnull=True, )
+                elif request.query_params['status'] == "unclaimed":
+                    service_tickets = ServiceTicket.objects.filter(date_completed__isnull=True, employee__isnull=True)
+
+                elif request.query_params['status'] == "inprogress":
+                    service_tickets = ServiceTicket.objects.filter(date_completed__isnull=True, employee__isnull=False)
+
+                # elif any(status_value == request.query_params['status'] for status_value in ('claimed', 'inprogress')):
+                #     service_tickets = ServiceTicket.objects.filter(employee__isnull=False, date_completed__isnull=True, )
 
                 elif request.query_params['status'] == "all":
                     # pass
                     service_tickets = ServiceTicket.objects.all()
                 
                 else:
-                    return Response({ "message": 'Invalid-status must be equal to "done" or "all".'}, status.HTTP_400_BAD_REQUEST)
+                    return Response({ "message": 'Invalid-status must be equal to "done", "all", "unclaimed", or "inprogress".'}, status.HTTP_400_BAD_REQUEST)
                 
         else:
             service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
