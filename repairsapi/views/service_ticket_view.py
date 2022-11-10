@@ -97,6 +97,11 @@ class ServiceTicketView(ViewSet):
                 
                 else:
                     return Response({ "message": 'Invalid-status must be equal to "done", "all", "unclaimed", or "inprogress".'}, status.HTTP_400_BAD_REQUEST)
+            
+            if "search" in request.query_params:
+                service_tickets = ServiceTicket.objects.filter(description__contains=request.query_params['search'])
+            else:
+                pass
                 
         else:
             service_tickets = ServiceTicket.objects.filter(date_completed__isnull=False)
